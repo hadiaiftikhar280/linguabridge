@@ -5,101 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LinguaBridge AI</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #f5f3ff 0%, #e0f2fe 100%); }
-  .header { background: linear-gradient(135deg, #6c47ff, #0ea5e9); padding: 28px 20px 24px; text-align: center; color: #fff; }
-  .header .emoji { font-size: 40px; margin-bottom: 6px; }
-  .header h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
-  .header p { opacity: 0.85; font-size: 13px; }
-  .container { max-width: 600px; margin: 0 auto; padding: 0 16px 48px; }
-  .tabs { display: flex; gap: 6px; margin: 20px 0 16px; background: #fff; border-radius: 12px; padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .tab { flex: 1; padding: 10px 4px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 12px; background: transparent; color: #64748b; transition: all 0.2s; }
-  .tab.active0 { background: #6c47ff; color: #fff; }
-  .tab.active1 { background: #0ea5e9; color: #fff; }
-  .tab.active2 { background: #f59e0b; color: #fff; }
-  .writing-styles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-  .style-btn { padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer; text-align: left; transition: all 0.2s; }
-  .style-btn.selected { border-color: #0ea5e9; background: #e0f2fe; }
-  .style-btn .icon { font-size: 16px; }
-  .style-btn .name { font-weight: 700; font-size: 13px; color: #1e293b; }
-  .style-btn .desc { font-size: 11px; color: #64748b; }
-  .input-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 14px; }
-  textarea { width: 100%; border: none; outline: none; padding: 16px; font-size: 15px; resize: none; font-family: inherit; color: #1e293b; line-height: 1.6; }
-  .input-footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid #f1f5f9; }
-  .char-count { font-size: 12px; color: #94a3b8; }
-  .btn-row { display: flex; gap: 8px; }
-  .btn-clear { background: #f1f5f9; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; color: #64748b; font-weight: 600; }
-  .btn-submit { border: none; border-radius: 8px; padding: 8px 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: #fff; }
-  .btn-submit:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
-  .result-card { background: #fff; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
-  .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .result-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-  .btn-copy { border: none; border-radius: 6px; padding: 4px 12px; font-size: 12px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-  .result-text { color: #1e1b4b; font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
-  .note-box { border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .tag { border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 600; }
-  .spinner { display: flex; justify-content: center; padding: 24px; }
-  .spin { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top: 3px solid #6c47ff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .error { background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 10px; padding: 12px 16px; color: #dc2626; font-size: 14px; margin-bottom: 12px; }
-  .history-title { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 10px; display: flex; justify-content: space-between; }
-  .history-item { background: #fff; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; border: 1px solid #e2e8f0; }
-  .history-mode { font-size: 11px; font-weight: 700; color: #6c47ff; margin-bottom: 4px; }
-  .history-input { font-size: 13px; color: #475569; }
-  .history-output { font-size: 12px; color: #94a3b8; margin-top: 2px; }
-  .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #94a3b8; }
-  .fade-in { animation: fadeIn 0.4s ease; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-  .hidden { display: none; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #f5f3ff 0%, #e0f2fe 100%); }
+.header { background: linear-gradient(135deg, #6c47ff, #0ea5e9); padding: 28px 20px 24px; text-align: center; color: #fff; }
+.header img { width: 70px; height: 70px; border-radius: 16px; margin-bottom: 10px; }
+.header h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+.header p { opacity: 0.85; font-size: 13px; }
+.container { max-width: 600px; margin: 0 auto; padding: 0 16px 48px; }
+.tabs { display: flex; gap: 6px; margin: 20px 0 16px; background: #fff; border-radius: 12px; padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.tab { flex: 1; padding: 10px 4px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 12px; background: transparent; color: #64748b; transition: all 0.2s; }
+.tab.active0 { background: #6c47ff; color: #fff; }
+.tab.active1 { background: #0ea5e9; color: #fff; }
+.tab.active2 { background: #f59e0b; color: #fff; }
+.writing-styles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.style-btn { padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer; text-align: left; transition: all 0.2s; }
+.style-btn.selected { border-color: #0ea5e9; background: #e0f2fe; }
+.style-btn .icon { font-size: 16px; }
+.style-btn .name { font-weight: 700; font-size: 13px; color: #1e293b; }
+.style-btn .desc { font-size: 11px; color: #64748b; }
+.input-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 14px; }
+textarea { width: 100%; border: none; outline: none; padding: 16px; font-size: 15px; resize: none; font-family: inherit; color: #1e293b; line-height: 1.6; }
+.input-footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid #f1f5f9; }
+.char-count { font-size: 12px; color: #94a3b8; }
+.btn-row { display: flex; gap: 8px; }
+.btn-clear { background: #f1f5f9; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; color: #64748b; font-weight: 600; }
+.btn-submit { border: none; border-radius: 8px; padding: 8px 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: #fff; }
+.result-card { background: #fff; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+.result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.result-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.btn-copy { border: none; border-radius: 6px; padding: 4px 12px; font-size: 12px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+.result-text { color: #1e1b4b; font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
+.note-box { border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tag { border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 600; }
+.spinner { display: flex; justify-content: center; padding: 24px; }
+.spin { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top: 3px solid #6c47ff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error { background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 10px; padding: 12px 16px; color: #dc2626; font-size: 14px; margin-bottom: 12px; }
+.history-title { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.history-item { background: #fff; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; border: 1px solid #e2e8f0; }
+.history-mode { font-size: 11px; font-weight: 700; color: #6c47ff; margin-bottom: 4px; }
+.history-input { font-size: 13px; color: #475569; }
+.history-output { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+.footer { text-align: center; margin-top: 32px; font-size: 12px; color: #94a3b8; }
+.fade-in { animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.hidden { display: none; }
 </style>
 </head>
 <body>
 <div class="header">
-  <div class="emoji">🌉</div>
-  <h1>LinguaBridge AI</h1>
-  <p>Smart Urdu ↔ English · Context-Aware · AI-Powered</p>
+<img src="file_000000002ca4720bad3db.png" alt="LinguaBridge Logo" onerror="this.style.display='none'"/>
+<h1>LinguaBridge AI</h1>
+<p>Smart Urdu ↔ English · Context-Aware · AI-Powered</p>
 </div>
 <div class="container">
-  <div class="tabs">
-    <button class="tab active0" onclick="setMode(0)">🌐 Smart Translation</button>
-    <button class="tab" onclick="setMode(1)">✍️ Writing Assistant</button>
-    <button class="tab" onclick="setMode(2)">📖 Word Explainer</button>
-  </div>
-  <div id="writingStyles" class="writing-styles hidden">
-    <button class="style-btn selected" onclick="setStyle(0,this)"><div class="icon">💬</div><div class="name">Simple English</div><div class="desc">Easy, everyday</div></button>
-    <button class="style-btn" onclick="setStyle(1,this)"><div class="icon">🎩</div><div class="name">Formal English</div><div class="desc">Polished & proper</div></button>
-    <button class="style-btn" onclick="setStyle(2,this)"><div class="icon">📧</div><div class="name">Professional Email</div><div class="desc">Ready to send</div></button>
-    <button class="style-btn" onclick="setStyle(3,this)"><div class="icon">🎓</div><div class="name">Academic Writing</div><div class="desc">Scholarly tone</div></button>
-  </div>
-  <div class="input-card">
-    <textarea id="inputText" rows="4" maxlength="12000" placeholder="Type in Urdu or English… (e.g. 'Yar, kal mera interview hai')" oninput="updateChar()"></textarea>
-    <div class="input-footer">
-      <span class="char-count" id="charCount">0 / 2000 words</span>
-      <div class="btn-row">
-        <button class="btn-clear" onclick="clearAll()">Clear</button>
-        <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">Translate ✨</button>
-      </div>
-    </div>
-  </div>
-  <div class="spinner hidden" id="spinner"><div class="spin"></div></div>
-  <div class="error hidden" id="errorBox"></div>
-  <div id="results" class="fade-in hidden"></div>
-  <div id="historySection" class="hidden" style="margin-top:24px">
-    <div class="history-title">
-      <span>🕐 Recent History</span>
-      <button onclick="clearHistory()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:12px;">Clear</button>
-    </div>
-    <div id="historyList"></div>
-  </div>
-  <div class="footer">Made with ❤️ for Students & Professionals · LinguaBridge AI</div>
+<div class="tabs">
+<button class="tab active0" onclick="setMode(0)">🌐 Smart Translation</button>
+<button class="tab" onclick="setMode(1)">✍️ Writing Assistant</button>
+<button class="tab" onclick="setMode(2)">📖 Word Explainer</button>
+</div>
+<div id="writingStyles" class="writing-styles hidden">
+<button class="style-btn selected" onclick="setStyle(0,this)"><div class="icon">💬</div><div class="name">Simple English</div><div class="desc">Easy, everyday</div></button>
+<button class="style-btn" onclick="setStyle(1,this)"><div class="icon">🎩</div><div class="name">Formal English</div><div class="desc">Polished & proper</div></button>
+<button class="style-btn" onclick="setStyle(2,this)"><div class="icon">📧</div><div class="name">Professional Email</div><div class="desc">Ready to send</div></button>
+<button class="style-btn" onclick="setStyle(3,this)"><div class="icon">🎓</div><div class="name">Academic Writing</div><div class="desc">Scholarly tone</div></button>
+</div>
+<div class="input-card">
+<textarea id="inputText" rows="4" maxlength="12000" placeholder="Type in Urdu or English…" oninput="updateChar()"></textarea>
+<div class="input-footer">
+<span class="char-count" id="charCount">0 / 2000 words</span>
+<div class="btn-row">
+<button class="btn-clear" onclick="clearAll()">Clear</button>
+<button class="btn-submit" id="submitBtn" onclick="handleSubmit()">Translate ✨</button>
+</div>
+</div>
+</div>
+<div class="spinner hidden" id="spinner"><div class="spin"></div></div>
+<div class="error hidden" id="errorBox"></div>
+<div id="results" class="fade-in hidden"></div>
+<div id="historySection" class="hidden" style="margin-top:24px">
+<div class="history-title"><span>🕐 Recent History</span><button onclick="clearHistory()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:12px;">Clear</button></div>
+<div id="historyList"></div>
+</div>
+<div class="footer">Made with ❤️ for Students & Professionals · LinguaBridge AI</div>
 </div>
 <script>
 let currentMode=0,currentStyle=0,history=[];
 const styleNames=["Simple English","Formal English","Professional Email","Academic Writing"];
-const placeholders=["Type in Urdu or English… (e.g. 'Yar, kal mera interview hai')","Type something to rewrite… (e.g. 'I can't come tomorrow')","Enter a word or phrase… (e.g. 'Resilient')"];
+const placeholders=["Type in Urdu or English…","Type something to rewrite…","Enter a word or phrase…"];
 const btnLabels=["Translate ✨","Rewrite ✍️","Explain 📖"];
 const accentColors=["#6c47ff","#0ea5e9","#f59e0b"];
+const GEMINI_KEY="AIzaSyAQ.Ab8RN6KwtF-iUgGfJ6zvOKM55LsNlFx5m43PYpIzHtf4wF5d8g";
 function setMode(m){currentMode=m;document.querySelectorAll('.tab').forEach((t,i)=>{t.className='tab'+(i===m?' active'+m:'');});document.getElementById('writingStyles').classList.toggle('hidden',m!==1);document.getElementById('inputText').placeholder=placeholders[m];document.getElementById('submitBtn').textContent=btnLabels[m];document.getElementById('submitBtn').style.background=`linear-gradient(135deg,${accentColors[m]},${accentColors[m]}cc)`;clearResults();}
 function setStyle(i,el){currentStyle=i;document.querySelectorAll('.style-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
 function updateChar(){const v=document.getElementById('inputText').value;const words=v.trim()===''?0:v.trim().split(/\s+/).length;const c=document.getElementById('charCount');c.textContent=words+' / 2000 words';c.style.color=words>2000?'#dc2626':'#94a3b8';if(words>2000){document.getElementById('inputText').value=v.trim().split(/\s+/).slice(0,2000).join(' ');c.textContent='2000 / 2000 words';}}
@@ -108,13 +105,31 @@ function clearResults(){document.getElementById('results').classList.add('hidden
 function showError(msg){const e=document.getElementById('errorBox');e.textContent='⚠️ '+msg;e.classList.remove('hidden');}
 function showSpinner(v){document.getElementById('spinner').classList.toggle('hidden',!v);}
 function resultCard(title,content,accent){return `<div class="result-card" style="border:1.5px solid ${accent}22;border-left:4px solid ${accent}"><div class="result-header"><span class="result-label" style="color:${accent}">${title}</span><button class="btn-copy" style="background:#f1f0ff;color:${accent}" onclick="copyText(this,'${encodeURIComponent(content)}')">Copy</button></div><p class="result-text">${content}</p></div>`;}
-function copyText(btn,encoded){navigator.clipboard.writeText(decodeURIComponent(encoded));btn.textContent='✓ Copied';btn.style.background='#22c55e';btn.style.color='#fff';setTimeout(()=>{btn.textContent='Copy';btn.style.background='#f1f0ff';btn.style.color=accentColors[currentMode];},1800);}
+function copyText(btn,encoded){navigator.clipboard.writeText(decodeURIComponent(encoded));btn.textContent='✓ Copied';btn.style.background='#22c55e';btn.style.color='#fff';setTimeout(()=>{btn.textContent='Copy';btn.style.background='#f1f0ff';},1800);}
 function addHistory(mode,input,output){history.unshift({mode,input:input.slice(0,40),output:output?.slice(0,60)});if(history.length>5)history.pop();renderHistory();}
 function renderHistory(){if(history.length===0){document.getElementById('historySection').classList.add('hidden');return;}document.getElementById('historySection').classList.remove('hidden');document.getElementById('historyList').innerHTML=history.map(h=>`<div class="history-item"><div class="history-mode">${h.mode}</div><div class="history-input">"${h.input}…"</div><div class="history-output">→ ${h.output}…</div></div>`).join('');}
 function clearHistory(){history=[];renderHistory();}
-async function handleSubmit(){const input=document.getElementById('inputText').value.trim();if(!input)return;showSpinner(true);clearResults();let prompt='';if(currentMode===0){prompt=`You are a smart translator. Detect if the input is Urdu or English.\n- If Urdu → translate to English (smart, context-aware, NOT literal)\n- If English → translate to Urdu\n- Handle idioms and slang correctly\n- Also give a formal version\n\nInput: "${input}"\n\nRespond ONLY with valid JSON:\n{"detected_lang":"Urdu or English","smart_translation":"...","formal_translation":"...","note":"brief note if idiom handled, else empty string"}`;}else if(currentMode===1){const style=styleNames[currentStyle];prompt=`You are a writing assistant. Rewrite in "${style}" style. Also give one alternative.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON:\n{"rewritten":"...","alternative":"...","tip":"one short writing tip"}`;}else{prompt=`You are a vocabulary teacher. Explain: "${input}"\n\nRespond ONLY with valid JSON:\n{"urdu_translation":"...","english_meaning":"one clear definition","example_sentence":"natural example","synonyms":["w1","w2","w3"],"difficulty":"Beginner / Intermediate / Advanced"}`;}
-try{const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,messages:[{role:"user",content:prompt}]})});const data=await res.json();const text=data.content.map(b=>b.text||'').join('');const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());let html='';if(currentMode===0){html+=`<div style="font-size:12px;color:#64748b;margin-bottom:10px;font-weight:600;">🔍 Detected: <strong>${parsed.detected_lang}</strong></div>`;html+=resultCard('✅ Smart Translation',parsed.smart_translation,'#6c47ff');html+=resultCard('🎩 Formal Version',parsed.formal_translation,'#7c3aed');if(parsed.note)html+=`<div class="note-box" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">💡 <strong>Context note:</strong> ${parsed.note}</div>`;addHistory('Translation',input,parsed.smart_translation);}else if(currentMode===1){html+=`<div style="font-size:12px;color:#0ea5e9;margin-bottom:10px;font-weight:700;">✍️ Style: ${styleNames[currentStyle]}</div>`;html+=resultCard('Rewritten Version',parsed.rewritten,'#0ea5e9');html+=resultCard('Alternative Version',parsed.alternative,'#0284c7');if(parsed.tip)html+=`<div class="note-box" style="background:#f0f9ff;border:1px solid #bae6fd;color:#0c4a6e;">✏️ <strong>Writing Tip:</strong> ${parsed.tip}</div>`;addHistory(styleNames[currentStyle],input,parsed.rewritten);}else{html+=resultCard('🌐 Urdu Meaning',parsed.urdu_translation,'#f59e0b');html+=resultCard('📖 Definition',parsed.english_meaning,'#d97706');html+=resultCard('💬 Example',parsed.example_sentence,'#b45309');html+=`<div class="result-card" style="border:1.5px solid #fde68a;"><div style="font-size:12px;font-weight:700;color:#f59e0b;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">🔗 Synonyms</div><div class="tags">${parsed.synonyms.map(s=>`<span class="tag" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">${s}</span>`).join('')}</div><div style="margin-top:10px;font-size:12px;color:#64748b;">Level: <strong style="color:#f59e0b;">${parsed.difficulty}</strong></div></div>`;addHistory('Word Explainer',input,parsed.english_meaning);}const r=document.getElementById('results');r.innerHTML=html;r.classList.remove('hidden');}catch(e){showError('Something went wrong. Please try again.');}showSpinner(false);}
+async function handleSubmit(){
+const input=document.getElementById('inputText').value.trim();
+if(!input)return;
+showSpinner(true);clearResults();
+let prompt='';
+if(currentMode===0){prompt=`You are a smart translator. Detect if the input is Urdu or English. If Urdu translate to English smartly. If English translate to Urdu smartly. Handle idioms correctly. Also give formal version.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON:\n{"detected_lang":"Urdu or English","smart_translation":"...","formal_translation":"...","note":"brief note if idiom handled else empty"}`;}
+else if(currentMode===1){prompt=`Rewrite in "${styleNames[currentStyle]}" style. Give alternative too.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON:\n{"rewritten":"...","alternative":"...","tip":"one short tip"}`;}
+else{prompt=`Explain word/phrase: "${input}"\n\nRespond ONLY with valid JSON:\n{"urdu_translation":"...","english_meaning":"one clear definition","example_sentence":"natural example","synonyms":["w1","w2","w3"],"difficulty":"Beginner / Intermediate / Advanced"}`;}
+try{
+const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:1000}})});
+const data=await res.json();
+const text=data.candidates[0].content.parts[0].text;
+const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+let html='';
+if(currentMode===0){html+=`<div style="font-size:12px;color:#64748b;margin-bottom:10px;font-weight:600;">🔍 Detected: <strong>${parsed.detected_lang}</strong></div>`;html+=resultCard('✅ Smart Translation',parsed.smart_translation,'#6c47ff');html+=resultCard('🎩 Formal Version',parsed.formal_translation,'#7c3aed');if(parsed.note)html+=`<div class="note-box" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">💡 <strong>Context note:</strong> ${parsed.note}</div>`;addHistory('Translation',input,parsed.smart_translation);}
+else if(currentMode===1){html+=`<div style="font-size:12px;color:#0ea5e9;margin-bottom:10px;font-weight:700;">✍️ Style: ${styleNames[currentStyle]}</div>`;html+=resultCard('Rewritten',parsed.rewritten,'#0ea5e9');html+=resultCard('Alternative',parsed.alternative,'#0284c7');if(parsed.tip)html+=`<div class="note-box" style="background:#f0f9ff;border:1px solid #bae6fd;color:#0c4a6e;">✏️ <strong>Tip:</strong> ${parsed.tip}</div>`;addHistory(styleNames[currentStyle],input,parsed.rewritten);}
+else{html+=resultCard('🌐 Urdu Meaning',parsed.urdu_translation,'#f59e0b');html+=resultCard('📖 Definition',parsed.english_meaning,'#d97706');html+=resultCard('💬 Example',parsed.example_sentence,'#b45309');html+=`<div class="result-card" style="border:1.5px solid #fde68a;"><div style="font-size:12px;font-weight:700;color:#f59e0b;margin-bottom:8px;">🔗 Synonyms</div><div class="tags">${parsed.synonyms.map(s=>`<span class="tag" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">${s}</span>`).join('')}</div><div style="margin-top:10px;font-size:12px;color:#64748b;">Level: <strong style="color:#f59e0b;">${parsed.difficulty}</strong></div></div>`;addHistory('Word Explainer',input,parsed.english_meaning);}
+const r=document.getElementById('results');r.innerHTML=html;r.classList.remove('hidden');
+}catch(e){showError('Something went wrong. Please try again.');}
+showSpinner(false);}
 setMode(0);
 </script>
 </body>
-</html>
+ </html>
