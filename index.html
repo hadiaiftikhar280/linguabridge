@@ -96,36 +96,52 @@ const styleNames=["Simple English","Formal English","Professional Email","Academ
 const placeholders=["Type in Urdu or English… (e.g. 'Yar, kal mera interview hai')","Type something to rewrite…","Enter a word or phrase…"];
 const btnLabels=["Translate ✨","Rewrite ✍️","Explain 📖"];
 const accentColors=["#6c47ff","#0ea5e9","#f59e0b"];
-const OR_KEY="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";
-function setMode(m){currentMode=m;document.querySelectorAll('.tab').forEach((t,i)=>{t.className='tab'+(i===m?' active'+m:'');});document.getElementById('writingStyles').classList.toggle('hidden',m!==1);document.getElementById('inputText').placeholder=placeholders[m];document.getElementById('submitBtn').textContent=btnLabels[m];document.getElementById('submitBtn').style.background=`linear-gradient(135deg,${accentColors[m]},${accentColors[m]}cc)`;clearResults();}
+const GROQ_KEY="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";
+function setMode(m){currentMode=m;document.querySelectorAll('.tab').forEach((t,i)=>{t.className='tab'+(i===m?' active'+m:'');});document.getElementById('writingStyles').classList.toggle('hidden',m!==1);document.getElementById('inputText').placeholder=placeholders[m];document.getElementById('submitBtn').textContent=btnLabels[m];document.getElementById('submitBtn').style.background='linear-gradient(135deg,'+accentColors[m]+','+accentColors[m]+'cc)';clearResults();}
 function setStyle(i,el){currentStyle=i;document.querySelectorAll('.style-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
 function updateChar(){const v=document.getElementById('inputText').value;const words=v.trim()===''?0:v.trim().split(/\s+/).length;const c=document.getElementById('charCount');c.textContent=words+' / 2000 words';c.style.color=words>2000?'#dc2626':'#94a3b8';if(words>2000){document.getElementById('inputText').value=v.trim().split(/\s+/).slice(0,2000).join(' ');c.textContent='2000 / 2000 words';}}
 function clearAll(){document.getElementById('inputText').value='';updateChar();clearResults();}
 function clearResults(){document.getElementById('results').classList.add('hidden');document.getElementById('results').innerHTML='';document.getElementById('errorBox').classList.add('hidden');}
 function showError(msg){const e=document.getElementById('errorBox');e.textContent='⚠️ '+msg;e.classList.remove('hidden');}
 function showSpinner(v){document.getElementById('spinner').classList.toggle('hidden',!v);}
-function resultCard(title,content,accent){return `<div class="result-card" style="border:1.5px solid ${accent}22;border-left:4px solid ${accent}"><div class="result-header"><span class="result-label" style="color:${accent}">${title}</span><button class="btn-copy" style="background:#f1f0ff;color:${accent}" onclick="copyText(this,'${encodeURIComponent(content)}')">Copy</button></div><p class="result-text">${content}</p></div>`;}
+function resultCard(title,content,accent){return '<div class="result-card" style="border:1.5px solid '+accent+'22;border-left:4px solid '+accent+'"><div class="result-header"><span class="result-label" style="color:'+accent+'">'+title+'</span><button class="btn-copy" style="background:#f1f0ff;color:'+accent+'" onclick="copyText(this,\''+encodeURIComponent(content)+'\')">Copy</button></div><p class="result-text">'+content+'</p></div>';}
 function copyText(btn,encoded){navigator.clipboard.writeText(decodeURIComponent(encoded));btn.textContent='✓ Copied';btn.style.background='#22c55e';btn.style.color='#fff';setTimeout(()=>{btn.textContent='Copy';btn.style.background='#f1f0ff';},1800);}
-function addHistory(mode,input,output){history.unshift({mode,input:input.slice(0,40),output:output?.slice(0,60)});if(history.length>5)history.pop();renderHistory();}
-function renderHistory(){if(history.length===0){document.getElementById('historySection').classList.add('hidden');return;}document.getElementById('historySection').classList.remove('hidden');document.getElementById('historyList').innerHTML=history.map(h=>`<div class="history-item"><div class="history-mode">${h.mode}</div><div class="history-input">"${h.input}…"</div><div class="history-output">→ ${h.output}…</div></div>`).join('');}
+function addHistory(mode,input,output){history.unshift({mode,input:input.slice(0,40),output:output?output.slice(0,60):''});if(history.length>5)history.pop();renderHistory();}
+function renderHistory(){if(history.length===0){document.getElementById('historySection').classList.add('hidden');return;}document.getElementById('historySection').classList.remove('hidden');document.getElementById('historyList').innerHTML=history.map(h=>'<div class="history-item"><div class="history-mode">'+h.mode+'</div><div class="history-input">"'+h.input+'..."</div><div class="history-output">'+h.output+'...</div></div>').join('');}
 function clearHistory(){history=[];renderHistory();}
 async function handleSubmit(){
 const input=document.getElementById('inputText').value.trim();
 if(!input)return;
 showSpinner(true);clearResults();
 let prompt='';
-if(currentMode===0){prompt=`You are a smart translator. Detect if the input is Urdu or English. If Urdu translate to English smartly. If English translate to Urdu smartly. Handle idioms correctly. Also give formal version.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON (no markdown):\n{"detected_lang":"Urdu or English","smart_translation":"...","formal_translation":"...","note":"brief note if idiom handled else empty string"}`;}
-else if(currentMode===1){const style=styleNames[currentStyle];prompt=`Rewrite in "${style}" style. Give alternative too.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON (no markdown):\n{"rewritten":"...","alternative":"...","tip":"one short tip"}`;}
-else{prompt=`Explain word/phrase: "${input}"\n\nRespond ONLY with valid JSON (no markdown):\n{"urdu_translation":"...","english_meaning":"one clear definition","example_sentence":"natural example","synonyms":["w1","w2","w3"],"difficulty":"Beginner / Intermediate / Advanced"}`;}
+if(currentMode===0){prompt='You are a smart translator. Detect if the input is Urdu or English. If Urdu translate to English smartly. If English translate to Urdu smartly. Handle idioms correctly. Also give formal version.\n\nInput: "'+input+'"\n\nRespond ONLY with valid JSON (no markdown, no extra text):\n{"detected_lang":"Urdu or English","smart_translation":"...","formal_translation":"...","note":"brief note if idiom handled else empty string"}';}
+else if(currentMode===1){prompt='Rewrite in "'+styleNames[currentStyle]+'" style. Give alternative too.\n\nInput: "'+input+'"\n\nRespond ONLY with valid JSON (no markdown):\n{"rewritten":"...","alternative":"...","tip":"one short tip"}';}
+else{prompt='Explain word or phrase: "'+input+'"\n\nRespond ONLY with valid JSON (no markdown):\n{"urdu_translation":"...","english_meaning":"one clear definition","example_sentence":"natural example","synonyms":["w1","w2","w3"],"difficulty":"Beginner or Intermediate or Advanced"}';}
 try{
-const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY,"HTTP-Referer":"https://loquacious-bonbon-c93669.netlify.app","X-Title":"LinguaBridge AI"},body:JSON.stringify({model:"mistralai/mistral-7b-instruct:free",messages:[{role:"user",content:prompt}],max_tokens:1000})});
+const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:'llama3-8b-8192',messages:[{role:'user',content:prompt}],max_tokens:1000,temperature:0.7})});
 const data=await res.json();
 const text=data.choices[0].message.content;
 const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
 let html='';
-if(currentMode===0){html+=`<div style="font-size:12px;color:#64748b;margin-bottom:10px;font-weight:600;">🔍 Detected: <strong>${parsed.detected_lang}</strong></div>`;html+=resultCard('✅ Smart Translation',parsed.smart_translation,'#6c47ff');html+=resultCard('🎩 Formal Version',parsed.formal_translation,'#7c3aed');if(parsed.note)html+=`<div class="note-box" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">💡 <strong>Context note:</strong> ${parsed.note}</div>`;addHistory('Translation',input,parsed.smart_translation);}
-else if(currentMode===1){html+=`<div style="font-size:12px;color:#0ea5e9;margin-bottom:10px;font-weight:700;">✍️ Style: ${styleNames[currentStyle]}</div>`;html+=resultCard('Rewritten',parsed.rewritten,'#0ea5e9');html+=resultCard('Alternative',parsed.alternative,'#0284c7');if(parsed.tip)html+=`<div class="note-box" style="background:#f0f9ff;border:1px solid #bae6fd;color:#0c4a6e;">✏️ <strong>Tip:</strong> ${parsed.tip}</div>`;addHistory(styleNames[currentStyle],input,parsed.rewritten);}
-else{html+=resultCard('🌐 Urdu Meaning',parsed.urdu_translation,'#f59e0b');html+=resultCard('📖 Definition',parsed.english_meaning,'#d97706');html+=resultCard('💬 Example',parsed.example_sentence,'#b45309');html+=`<div class="result-card" style="border:1.5px solid #fde68a;"><div style="font-size:12px;font-weight:700;color:#f59e0b;margin-bottom:8px;">🔗 Synonyms</div><div class="tags">${parsed.synonyms.map(s=>`<span class="tag" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">${s}</span>`).join('')}</div><div style="margin-top:10px;font-size:12px;color:#64748b;">Level: <strong style="color:#f59e0b;">${parsed.difficulty}</strong></div></div>`;addHistory('Word Explainer',input,parsed.english_meaning);}
+if(currentMode===0){
+html+='<div style="font-size:12px;color:#64748b;margin-bottom:10px;font-weight:600;">🔍 Detected: <strong>'+parsed.detected_lang+'</strong></div>';
+html+=resultCard('✅ Smart Translation',parsed.smart_translation,'#6c47ff');
+html+=resultCard('🎩 Formal Version',parsed.formal_translation,'#7c3aed');
+if(parsed.note)html+='<div class="note-box" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">💡 <strong>Context note:</strong> '+parsed.note+'</div>';
+addHistory('Translation',input,parsed.smart_translation);
+}else if(currentMode===1){
+html+='<div style="font-size:12px;color:#0ea5e9;margin-bottom:10px;font-weight:700;">✍️ Style: '+styleNames[currentStyle]+'</div>';
+html+=resultCard('Rewritten',parsed.rewritten,'#0ea5e9');
+html+=resultCard('Alternative',parsed.alternative,'#0284c7');
+if(parsed.tip)html+='<div class="note-box" style="background:#f0f9ff;border:1px solid #bae6fd;color:#0c4a6e;">✏️ <strong>Tip:</strong> '+parsed.tip+'</div>';
+addHistory(styleNames[currentStyle],input,parsed.rewritten);
+}else{
+html+=resultCard('🌐 Urdu Meaning',parsed.urdu_translation,'#f59e0b');
+html+=resultCard('📖 Definition',parsed.english_meaning,'#d97706');
+html+=resultCard('💬 Example',parsed.example_sentence,'#b45309');
+html+='<div class="result-card" style="border:1.5px solid #fde68a;"><div style="font-size:12px;font-weight:700;color:#f59e0b;margin-bottom:8px;">🔗 Synonyms</div><div class="tags">'+parsed.synonyms.map(s=>'<span class="tag" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">'+s+'</span>').join('')+'</div><div style="margin-top:10px;font-size:12px;color:#64748b;">Level: <strong style="color:#f59e0b;">'+parsed.difficulty+'</strong></div></div>';
+addHistory('Word Explainer',input,parsed.english_meaning);
+}
 const r=document.getElementById('results');r.innerHTML=html;r.classList.remove('hidden');
 }catch(e){showError('Something went wrong. Please try again.');}
 showSpinner(false);}
