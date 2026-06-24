@@ -8,7 +8,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #f5f3ff 0%, #e0f2fe 100%); }
 .header { background: linear-gradient(135deg, #6c47ff, #0ea5e9); padding: 28px 20px 24px; text-align: center; color: #fff; }
-.header img { width: 70px; height: 70px; border-radius: 16px; margin-bottom: 10px; }
+.header img { width: 80px; height: 80px; border-radius: 20px; margin-bottom: 10px; object-fit: contain; background: white; padding: 6px; }
 .header h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
 .header p { opacity: 0.85; font-size: 13px; }
 .container { max-width: 600px; margin: 0 auto; padding: 0 16px 48px; }
@@ -55,7 +55,7 @@ textarea { width: 100%; border: none; outline: none; padding: 16px; font-size: 1
 </head>
 <body>
 <div class="header">
-<img src="file_000000002ca4720bad3db.png" alt="LinguaBridge Logo" onerror="this.style.display='none'"/>
+<img src="file_000000002ca4720bad3db.png" alt="LinguaBridge" onerror="this.outerHTML='<div style=font-size:40px;margin-bottom:8px>🌉</div>'"/>
 <h1>LinguaBridge AI</h1>
 <p>Smart Urdu ↔ English · Context-Aware · AI-Powered</p>
 </div>
@@ -72,7 +72,7 @@ textarea { width: 100%; border: none; outline: none; padding: 16px; font-size: 1
 <button class="style-btn" onclick="setStyle(3,this)"><div class="icon">🎓</div><div class="name">Academic Writing</div><div class="desc">Scholarly tone</div></button>
 </div>
 <div class="input-card">
-<textarea id="inputText" rows="4" maxlength="12000" placeholder="Type in Urdu or English…" oninput="updateChar()"></textarea>
+<textarea id="inputText" rows="4" maxlength="12000" placeholder="Type in Urdu or English… (e.g. 'Yar, kal mera interview hai')" oninput="updateChar()"></textarea>
 <div class="input-footer">
 <span class="char-count" id="charCount">0 / 2000 words</span>
 <div class="btn-row">
@@ -93,10 +93,10 @@ textarea { width: 100%; border: none; outline: none; padding: 16px; font-size: 1
 <script>
 let currentMode=0,currentStyle=0,history=[];
 const styleNames=["Simple English","Formal English","Professional Email","Academic Writing"];
-const placeholders=["Type in Urdu or English…","Type something to rewrite…","Enter a word or phrase…"];
+const placeholders=["Type in Urdu or English… (e.g. 'Yar, kal mera interview hai')","Type something to rewrite…","Enter a word or phrase…"];
 const btnLabels=["Translate ✨","Rewrite ✍️","Explain 📖"];
 const accentColors=["#6c47ff","#0ea5e9","#f59e0b"];
-const GEMINI_KEY="AIzaSyAQ.Ab8RN6KwtF-iUgGfJ6zvOKM55LsNlFx5m43PYpIzHtf4wF5d8g";
+const OR_KEY="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";
 function setMode(m){currentMode=m;document.querySelectorAll('.tab').forEach((t,i)=>{t.className='tab'+(i===m?' active'+m:'');});document.getElementById('writingStyles').classList.toggle('hidden',m!==1);document.getElementById('inputText').placeholder=placeholders[m];document.getElementById('submitBtn').textContent=btnLabels[m];document.getElementById('submitBtn').style.background=`linear-gradient(135deg,${accentColors[m]},${accentColors[m]}cc)`;clearResults();}
 function setStyle(i,el){currentStyle=i;document.querySelectorAll('.style-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
 function updateChar(){const v=document.getElementById('inputText').value;const words=v.trim()===''?0:v.trim().split(/\s+/).length;const c=document.getElementById('charCount');c.textContent=words+' / 2000 words';c.style.color=words>2000?'#dc2626':'#94a3b8';if(words>2000){document.getElementById('inputText').value=v.trim().split(/\s+/).slice(0,2000).join(' ');c.textContent='2000 / 2000 words';}}
@@ -114,13 +114,13 @@ const input=document.getElementById('inputText').value.trim();
 if(!input)return;
 showSpinner(true);clearResults();
 let prompt='';
-if(currentMode===0){prompt=`You are a smart translator. Detect if the input is Urdu or English. If Urdu translate to English smartly. If English translate to Urdu smartly. Handle idioms correctly. Also give formal version.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON:\n{"detected_lang":"Urdu or English","smart_translation":"...","formal_translation":"...","note":"brief note if idiom handled else empty"}`;}
-else if(currentMode===1){prompt=`Rewrite in "${styleNames[currentStyle]}" style. Give alternative too.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON:\n{"rewritten":"...","alternative":"...","tip":"one short tip"}`;}
-else{prompt=`Explain word/phrase: "${input}"\n\nRespond ONLY with valid JSON:\n{"urdu_translation":"...","english_meaning":"one clear definition","example_sentence":"natural example","synonyms":["w1","w2","w3"],"difficulty":"Beginner / Intermediate / Advanced"}`;}
+if(currentMode===0){prompt=`You are a smart translator. Detect if the input is Urdu or English. If Urdu translate to English smartly. If English translate to Urdu smartly. Handle idioms correctly. Also give formal version.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON (no markdown):\n{"detected_lang":"Urdu or English","smart_translation":"...","formal_translation":"...","note":"brief note if idiom handled else empty string"}`;}
+else if(currentMode===1){const style=styleNames[currentStyle];prompt=`Rewrite in "${style}" style. Give alternative too.\n\nInput: "${input}"\n\nRespond ONLY with valid JSON (no markdown):\n{"rewritten":"...","alternative":"...","tip":"one short tip"}`;}
+else{prompt=`Explain word/phrase: "${input}"\n\nRespond ONLY with valid JSON (no markdown):\n{"urdu_translation":"...","english_meaning":"one clear definition","example_sentence":"natural example","synonyms":["w1","w2","w3"],"difficulty":"Beginner / Intermediate / Advanced"}`;}
 try{
-const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:1000}})});
+const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY,"HTTP-Referer":"https://loquacious-bonbon-c93669.netlify.app","X-Title":"LinguaBridge AI"},body:JSON.stringify({model:"mistralai/mistral-7b-instruct:free",messages:[{role:"user",content:prompt}],max_tokens:1000})});
 const data=await res.json();
-const text=data.candidates[0].content.parts[0].text;
+const text=data.choices[0].message.content;
 const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
 let html='';
 if(currentMode===0){html+=`<div style="font-size:12px;color:#64748b;margin-bottom:10px;font-weight:600;">🔍 Detected: <strong>${parsed.detected_lang}</strong></div>`;html+=resultCard('✅ Smart Translation',parsed.smart_translation,'#6c47ff');html+=resultCard('🎩 Formal Version',parsed.formal_translation,'#7c3aed');if(parsed.note)html+=`<div class="note-box" style="background:#fefce8;border:1px solid #fde68a;color:#92400e;">💡 <strong>Context note:</strong> ${parsed.note}</div>`;addHistory('Translation',input,parsed.smart_translation);}
@@ -132,4 +132,4 @@ showSpinner(false);}
 setMode(0);
 </script>
 </body>
- </html>
+</html>
